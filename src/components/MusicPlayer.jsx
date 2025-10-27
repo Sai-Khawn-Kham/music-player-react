@@ -16,15 +16,54 @@ const MusicPlayer = () => {
   const [seek, setSeek] = React.useState(0);
   const [maxSeek, setMaxSeek] = React.useState(0);
 
-  setTimeout(() => {
-    setMaxSeek(audioTagRef.current.duration);
-    setSongDuration(formatTime(parseInt(audioTagRef.current.duration)));
-  }, 500);
+  React.useEffect(() => {
+    if (isPlay) {
+      audioTagRef.current.play();
+    } else {
+      audioTagRef.current.pause();
+    }
+  }, [isPlay, currentSong]);
 
-  setInterval(() => {
-    setSeek(audioTagRef.current.currentTime);
-    setCurrentTime(formatTime(parseInt(audioTagRef.current.currentTime)));
-  }, 500);
+  // Update duration once the song is loaded
+  React.useEffect(() => {
+    const updateDuration = () => {
+      if (audioTagRef.current?.duration) {
+        setMaxSeek(audioTagRef.current.duration);
+        setSongDuration(formatTime(Math.floor(audioTagRef.current.duration)));
+      }
+    };
+    audioTagRef.current?.addEventListener("loadedmetadata", updateDuration);
+    return () => {
+      audioTagRef.current?.removeEventListener(
+        "loadedmetadata",
+        updateDuration
+      );
+    };
+  }, [currentSong]);
+  // setTimeout(() => {
+  //   setMaxSeek(audioTagRef.current.duration);
+  //   setSongDuration(formatTime(parseInt(audioTagRef.current.duration)));
+  // }, 500);
+
+  // Update current time every 500ms while playing
+  React.useEffect(() => {
+    let interval;
+    if (isPlay) {
+      interval = setInterval(() => {
+        if (audioTagRef.current) {
+          setSeek(audioTagRef.current.currentTime);
+          setCurrentTime(
+            formatTime(Math.floor(audioTagRef.current.currentTime))
+          );
+        }
+      }, 500);
+    }
+    return () => clearInterval(interval);
+  }, [isPlay]);
+  // setInterval(() => {
+  //   setSeek(audioTagRef.current.currentTime);
+  //   setCurrentTime(formatTime(parseInt(audioTagRef.current.currentTime)));
+  // }, 500);
 
   const formatTime = (time) => {
     let min = Math.floor(time / 60);
@@ -39,15 +78,19 @@ const MusicPlayer = () => {
   };
 
   const handleNext = () => {
-    if (currentSong.id == songs.length) {
-      setCurrentSong(songs[0]);
-    } else {
-      setCurrentSong(songs[currentSong.id]);
-    }
-    setTimeout(() => {
-      audioTagRef.current.play();
-      setIsPlay(true);
-    }, 50);
+    const currentIndex = songs.findIndex((s) => s.id === currentSong.id);
+    const nextIndex = (currentIndex + 1) % songs.length;
+    setCurrentSong(songs[nextIndex]);
+    setIsPlay(true);
+    // if (currentSong.id == songs.length) {
+    //   setCurrentSong(songs[0]);
+    // } else {
+    //   setCurrentSong(songs[currentSong.id]);
+    // }
+    // setTimeout(() => {
+    //   audioTagRef.current.play();
+    //   setIsPlay(true);
+    // }, 50);
   };
 
   const handlePlay = () => {
@@ -60,21 +103,26 @@ const MusicPlayer = () => {
   };
 
   const handlePrevious = () => {
-    if (currentSong.id == 1) {
-      setCurrentSong(songs[songs.length - 1]);
-    } else {
-      setCurrentSong(songs[currentSong.id - 2]);
-    }
-    setTimeout(() => {
-      audioTagRef.current.play();
-      setIsPlay(true);
-    }, 50);
+    const currentIndex = songs.findIndex((s) => s.id === currentSong.id);
+    const prevIndex = (currentIndex - 1 + songs.length) % songs.length;
+    setCurrentSong(songs[prevIndex]);
+    setIsPlay(true);
+    // if (currentSong.id == 1) {
+    //   setCurrentSong(songs[songs.length - 1]);
+    // } else {
+    //   setCurrentSong(songs[currentSong.id - 2]);
+    // }
+    // setTimeout(() => {
+    //   audioTagRef.current.play();
+    //   setIsPlay(true);
+    // }, 50);
   };
 
   const handleSeek = (e) => {
     audioTagRef.current.currentTime = e.target.value;
-    audioTagRef.current.play();
-    setIsPlay(true);
+    // audioTagRef.current.currentTime = e.target.value;
+    // audioTagRef.current.play();
+    // setIsPlay(true);
   };
 
   const handleTheme = () => {
@@ -106,7 +154,7 @@ const MusicPlayer = () => {
           </div>
           <div className="flex justify-center items-center">
             {dark ? (
-              <button onClick={handleTheme}>
+              <button onClick={handleTheme} className="cursor-pointer">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -123,7 +171,7 @@ const MusicPlayer = () => {
                 </svg>
               </button>
             ) : (
-              <button onClick={handleTheme}>
+              <button onClick={handleTheme} className="cursor-pointer">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -146,7 +194,7 @@ const MusicPlayer = () => {
       <div className="grow relative w-full">
         <Container className="p-3">
           <h2 className="font-medium font-serif text-2xl mb-2">Lists</h2>
-          <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-250px)] pb-3 hsb">
+          <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-237px)] scroll-pb-6 pb-3 hsb">
             {songs.map((song) => (
               <List
                 key={song.id}
@@ -160,9 +208,9 @@ const MusicPlayer = () => {
             ))}
           </div>
         </Container>
-        <div className="absolute bottom-0 w-full bg-slate-700">
-          <Container className="space-y-2 p-3">
-            <div className="flex justify-between items-center gap-3 text-sm text-slate-50">
+        <div className="absolute bottom-0 w-full bg-slate-400">
+          <Container className="space-y-1 p-2">
+            <div className="flex justify-between items-center gap-3 text-sm">
               <span>{currentTime}</span>
               <input
                 type="range"
@@ -175,37 +223,37 @@ const MusicPlayer = () => {
             </div>
             <div className="flex justify-between">
               <div className="flex gap-3">
-                <div>
+                <div className="flex justify-center items-center">
                   <img
                     src={currentSong.cover}
                     alt={currentSong.name}
-                    className="size-[70px] rounded-full"
+                    className={`size-[60px] rounded-full object-cover shadow-slate-300/20 animate-rotate ${
+                      isPlay ? "animation-play" : "animation-paused"
+                    }`}
                   />
                 </div>
                 <div className="flex flex-col justify-center">
-                  <p className="font-medium text-xl">{currentSong.name}</p>
-                  <p className="">{currentSong.artist}</p>
+                  <p className="font-medium text-xl line-clamp-1">
+                    {currentSong.name}
+                  </p>
+                  <p className=" line-clamp-1">{currentSong.artist}</p>
                 </div>
               </div>
               <div className="flex">
                 <button
                   onClick={handlePrevious}
+                  className="hidden md:inline-block"
                 >
                   <BiSkipPrevious className="text-slate-50 size-12" />
                 </button>
-                <button
-                  onClick={handlePlay}
-                  className="p-1"
-                >
+                <button onClick={handlePlay} className="p-1">
                   {isPlay ? (
                     <BiPause className="text-slate-50 size-16" />
                   ) : (
                     <BiPlay className="text-slate-50 size-16 translate-x-1" />
                   )}
                 </button>
-                <button
-                  onClick={handleNext}
-                >
+                <button onClick={handleNext} className="hidden md:inline-block">
                   <BiSkipNext className="text-slate-50 size-12" />
                 </button>
               </div>

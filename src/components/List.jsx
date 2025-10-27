@@ -2,7 +2,7 @@ import React from "react";
 import useMusicStore from "../store/useMusicStore";
 
 const List = ({
-  song: { id, name, url, artist, cover },
+  song,
   setCurrentSong,
   audioTagRef,
   setIsPlay,
@@ -12,28 +12,48 @@ const List = ({
   const { songs } = useMusicStore();
 
   const handleClick = () => {
-    setCurrentSong(songs[id - 1]);
-    setTimeout(() => {
-      audioTagRef.current.play();
-      setIsPlay(true);
-    }, 50);
+    if (song.id === currentSong.id) {
+      // same song clicked
+      if (isPlay) {
+        audioTagRef.current.pause();
+        setIsPlay(false);
+      } else {
+        audioTagRef.current.play();
+        setIsPlay(true);
+      }
+    } else {
+      // different song clicked
+      setCurrentSong(song);
+      setTimeout(() => {
+        audioTagRef.current.play();
+        setIsPlay(true);
+      }, 50);
+    }
   };
 
   return (
     <div
       onClick={handleClick}
-      className="grid grid-cols-3 active:scale-90 hover:shadow-lg hover:bg-slate-50 duration-300 p-3"
+      className={`grid grid-cols-3 active:scale-90 duration-300 p-3 rounded-lg cursor-pointer ${
+        song.id === currentSong.id
+          ? "bg-slate-100 shadow-lg"
+          : "hover:bg-slate-50 hover:shadow-md"
+      }`}
     >
-      <div>
-        <img src={cover} alt={name} className="size-[80px] rounded-full" />
+      <div className="flex items-center">
+        <img
+          src={song.cover}
+          alt={song.name}
+          className="size-[80px] rounded-full"
+        />
       </div>
       <div className="flex flex-col justify-center">
-        <p className="font-medium">{name}</p>
-        <p className="text-sm text-slate-700">{artist}</p>
+        <p className="font-medium line-clamp-1">{song.name}</p>
+        <p className="text-sm text-slate-700 line-clamp-1">{song.artist}</p>
       </div>
       <div className="flex justify-end items-center">
-        {isPlay && id === currentSong.id ? (
-          <button>
+        {isPlay && song.id === currentSong.id ? (
+          <button className="cursor-pointer">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -50,7 +70,7 @@ const List = ({
             </svg>
           </button>
         ) : (
-          <button>
+          <button className="cursor-pointer">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
