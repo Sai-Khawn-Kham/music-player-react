@@ -2,7 +2,6 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-   --shadow-disk: 0 0 0 10px;
    --animate-rotate: rotate 20s linear infinite;
    --animate-pulse: pulse 2s linear infinite;
 }
@@ -41,7 +40,7 @@
       -webkit-appearance: none;
       width: 1px;
       height: 20px;
-      box-shadow: -400px 0 0 400px var(--color-slate-600);
+      box-shadow: -600px 0 0 600px var(--color-slate-600);
    }
 }
 

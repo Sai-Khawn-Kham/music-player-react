@@ -34,10 +34,10 @@ const List = ({
   return (
     <div
       onClick={handleClick}
-      className={`grid grid-cols-3 active:scale-90 duration-300 p-3 rounded-lg cursor-pointer ${
+      className={`grid grid-cols-3 active:scale-90 duration-300 p-3 border border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer ${
         song.id === currentSong.id
-          ? "bg-slate-100 shadow-lg"
-          : "hover:bg-slate-50 hover:shadow-md"
+          ? "bg-slate-100 dark:bg-slate-700 shadow-lg"
+          : "hover:bg-slate-50 dark:hover:bg-slate-600 hover:shadow-md"
       }`}
     >
       <div className="flex items-center">
@@ -48,12 +48,12 @@ const List = ({
         />
       </div>
       <div className="flex flex-col justify-center">
-        <p className="font-medium line-clamp-1">{song.name}</p>
-        <p className="text-sm text-slate-700 line-clamp-1">{song.artist}</p>
+        <p className="font-medium dark:text-slate-50 line-clamp-1">{song.name}</p>
+        <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-1">{song.artist}</p>
       </div>
       <div className="flex justify-end items-center">
         {isPlay && song.id === currentSong.id ? (
-          <button className="cursor-pointer">
+          <button className="cursor-pointer dark:text-slate-50">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -70,7 +70,7 @@ const List = ({
             </svg>
           </button>
         ) : (
-          <button className="cursor-pointer">
+          <button className="cursor-pointer dark:text-slate-50">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

@@ -141,20 +141,20 @@ const MusicPlayer = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className={`${dark && "dark"} h-screen flex flex-col`}>
       <audio
         src={currentSong.url}
         ref={audioTagRef}
         onEnded={handleEnded}
       ></audio>
-      <div className="w-full shadow-lg">
+      <div className="w-full shadow-lg dark:bg-slate-700">
         <Container className={`flex justify-between p-3`}>
           <div>
-            <h1 className="font-semibold font-serif text-3xl">Khawn</h1>
+            <h1 className="font-semibold font-serif text-3xl dark:text-slate-50">Khawn</h1>
           </div>
           <div className="flex justify-center items-center">
             {dark ? (
-              <button onClick={handleTheme} className="cursor-pointer">
+              <button onClick={handleTheme} className="cursor-pointer dark:text-slate-50 duration-500">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -171,7 +171,7 @@ const MusicPlayer = () => {
                 </svg>
               </button>
             ) : (
-              <button onClick={handleTheme} className="cursor-pointer">
+              <button onClick={handleTheme} className="cursor-pointer duration-500">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -191,9 +191,9 @@ const MusicPlayer = () => {
           </div>
         </Container>
       </div>
-      <div className="grow relative w-full">
+      <div className="grow relative w-full dark:bg-slate-500">
         <Container className="p-3">
-          <h2 className="font-medium font-serif text-2xl mb-2">Lists</h2>
+          <h2 className="font-medium font-serif text-2xl dark:text-slate-50 mb-2">Lists</h2>
           <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-237px)] scroll-pb-6 pb-3 hsb">
             {songs.map((song) => (
               <List
@@ -208,9 +208,9 @@ const MusicPlayer = () => {
             ))}
           </div>
         </Container>
-        <div className="absolute bottom-0 w-full bg-slate-400">
+        <div className="absolute bottom-0 w-full bg-slate-400 dark:bg-slate-700">
           <Container className="space-y-1 p-2">
-            <div className="flex justify-between items-center gap-3 text-sm">
+            <div className="flex justify-between items-center gap-3 text-sm dark:text-slate-50">
               <span>{currentTime}</span>
               <input
                 type="range"
@@ -232,11 +232,11 @@ const MusicPlayer = () => {
                     }`}
                   />
                 </div>
-                <div className="flex flex-col justify-center">
+                <div className="flex flex-col justify-center dark:text-slate-50">
                   <p className="font-medium text-xl line-clamp-1">
                     {currentSong.name}
                   </p>
-                  <p className=" line-clamp-1">{currentSong.artist}</p>
+                  <p className="line-clamp-1">{currentSong.artist}</p>
                 </div>
               </div>
               <div className="flex">
